@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Clock,
   CreditCard,
   FileSpreadsheet,
   FileText,
@@ -18,6 +19,7 @@ const menuItems = [
   { name: "Member Management", href: "/dashboard/members", icon: Users },
   { name: "Savings Management", href: "/dashboard/savings", icon: CreditCard },
   { name: "Loan Management", href: "/dashboard/loans", icon: FileText },
+  { name: "Pay Later", href: "/dashboard/pay-later", icon: Clock },
   { name: "Inventory Management", href: "/dashboard/inventory", icon: Package },
   { name: "Accounting", href: "/dashboard/accounting", icon: FileSpreadsheet },
   { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },

@@ -8,7 +8,7 @@ import { createClient } from "../../supabase/server";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const fullName = formData.get("full_name")?.toString() || '';
+  const fullName = formData.get("full_name")?.toString() || "";
   const supabase = await createClient();
   const origin = headers().get("origin");
 
@@ -20,7 +20,58 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  const { data: { user }, error } = await supabase.auth.signUp({
+  // Check if user already exists but is inactive
+  const { data: existingUser } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  if (existingUser) {
+    // User exists, check if they're in auth.users
+    const { data: authUser } = await supabase.auth.admin.getUserByEmail(email);
+
+    if (!authUser) {
+      // User exists in users table but not in auth - recreate auth user
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${origin}/auth/callback`,
+          data: {
+            full_name: fullName,
+            email: email,
+          },
+        },
+      });
+
+      if (error) {
+        console.error(error.code + " " + error.message);
+        return encodedRedirect("error", "/sign-up", error.message);
+      }
+
+      return encodedRedirect(
+        "success",
+        "/sign-up",
+        "Account reactivated! Please check your email for a verification link.",
+      );
+    }
+
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      "An account with this email already exists. Please sign in instead.",
+    );
+  }
+
+  // Create new user
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -28,12 +79,11 @@ export const signUpAction = async (formData: FormData) => {
       data: {
         full_name: fullName,
         email: email,
-      }
+      },
     },
   });
 
   console.log("After signUp", error);
-
 
   if (error) {
     console.error(error.code + " " + error.message);
@@ -42,23 +92,21 @@ export const signUpAction = async (formData: FormData) => {
 
   if (user) {
     try {
-      const { error: updateError } = await supabase
-        .from('users')
-        .insert({
-          id: user.id,
-          name: fullName,
-          full_name: fullName,
-          email: email,
-          user_id: user.id,
-          token_identifier: user.id,
-          created_at: new Date().toISOString()
-        });
+      const { error: updateError } = await supabase.from("users").insert({
+        id: user.id,
+        name: fullName,
+        full_name: fullName,
+        email: email,
+        user_id: user.id,
+        token_identifier: user.id,
+        created_at: new Date().toISOString(),
+      });
 
       if (updateError) {
-        console.error('Error updating user profile:', updateError);
+        console.error("Error updating user profile:", updateError);
       }
     } catch (err) {
-      console.error('Error in user profile creation:', err);
+      console.error("Error in user profile creation:", err);
     }
   }
 
@@ -74,15 +122,47 @@ export const signInAction = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
+    // Check if the error is due to an inactive account
+    if (error.message.includes("Invalid login credentials")) {
+      // Check if user exists in the users table but might be inactive
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (existingUser) {
+        return encodedRedirect(
+          "error",
+          "/sign-in",
+          "Your account may be inactive. Please use the sign-up page to reactivate it.",
+        );
+      }
+    }
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
+  // Check user role to redirect to appropriate dashboard
+  const { data: userData } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", data.user.id)
+    .single();
+
+  // Redirect based on user role
+  if (userData && userData.role === "admin") {
+    return redirect("/dashboard/admin");
+  } else if (userData && userData.role === "member") {
+    return redirect("/member-portal");
+  }
+
+  // Default to dashboard if role is not specified
   return redirect("/dashboard");
 };
 

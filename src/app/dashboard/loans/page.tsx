@@ -1,8 +1,48 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Download, FileText, Plus, Search, Upload } from "lucide-react";
+import {
+  Download,
+  FileText,
+  Filter,
+  Plus,
+  Search,
+  Upload,
+  CreditCard,
+  Clock,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export default function LoansPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loanType, setLoanType] = useState("all");
+  const [loanStatus, setLoanStatus] = useState("all");
+  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("immediate");
+  const [paymentAmount, setPaymentAmount] = useState("");
   return (
     <div className="container mx-auto py-6">
       <header className="flex justify-between items-center mb-8">
@@ -194,14 +234,99 @@ export default function LoansPage() {
       <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Active Loans</h2>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input className="pl-10 w-64" placeholder="Search loans" />
+          <div className="flex gap-2 items-center">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <Input
+                className="pl-10 w-64"
+                placeholder="Search loans"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Select value={loanType} onValueChange={setLoanType}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All Loan Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Loan Types</SelectItem>
+                <SelectItem value="Business Loan">Business Loan</SelectItem>
+                <SelectItem value="Personal Loan">Personal Loan</SelectItem>
+                <SelectItem value="Home Improvement">
+                  Home Improvement
+                </SelectItem>
+                <SelectItem value="Education Loan">Education Loan</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
+            >
+              <Filter size={18} />
+            </Button>
           </div>
         </div>
+
+        {/* Advanced Search Options - Conditionally Rendered */}
+        {isAdvancedSearchOpen && (
+          <div className="px-6 pt-2 pb-4 border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="loan-status">Loan Status</Label>
+              <Select value={loanStatus} onValueChange={setLoanStatus}>
+                <SelectTrigger id="loan-status">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="Current">Current</SelectItem>
+                  <SelectItem value="Overdue">Overdue</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="amount-range">Amount Range</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="min-amount"
+                  placeholder="Min $"
+                  type="number"
+                  value={minAmount}
+                  onChange={(e) => setMinAmount(e.target.value)}
+                />
+                <span>to</span>
+                <Input
+                  id="max-amount"
+                  placeholder="Max $"
+                  type="number"
+                  value={maxAmount}
+                  onChange={(e) => setMaxAmount(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-end justify-end">
+              <Button
+                variant="outline"
+                className="mr-2"
+                onClick={() => {
+                  setSearchTerm("");
+                  setLoanType("all");
+                  setLoanStatus("all");
+                  setMinAmount("");
+                  setMaxAmount("");
+                }}
+              >
+                Reset Filters
+              </Button>
+              <Button>Apply Filters</Button>
+            </div>
+          </div>
+        )}
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -302,47 +427,92 @@ export default function LoansPage() {
                 nextPayment: "May 10, 2023",
                 status: "Overdue",
               },
-            ].map((loan) => (
-              <tr key={loan.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {loan.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {loan.member}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {loan.type}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {loan.principal}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {loan.outstanding}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {loan.nextPayment}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      loan.status === "Current"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {loan.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <Button variant="ghost" size="sm">
-                    Details
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    Payment
-                  </Button>
-                </td>
-              </tr>
-            ))}
+            ]
+              .filter((loan) => {
+                // Search term filter
+                const matchesSearch =
+                  searchTerm === "" ||
+                  loan.member
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                  loan.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+                // Loan type filter
+                const matchesType =
+                  loanType === "all" || loan.type === loanType;
+
+                // Loan status filter
+                const matchesStatus =
+                  loanStatus === "all" || loan.status === loanStatus;
+
+                // Amount filter
+                let matchesAmount = true;
+                if (minAmount || maxAmount) {
+                  const principalAmount = parseFloat(
+                    loan.principal.replace("$", "").replace(",", ""),
+                  );
+                  const minAmountValue = minAmount ? parseFloat(minAmount) : 0;
+                  const maxAmountValue = maxAmount
+                    ? parseFloat(maxAmount)
+                    : Infinity;
+
+                  matchesAmount =
+                    principalAmount >= minAmountValue &&
+                    principalAmount <= maxAmountValue;
+                }
+
+                return (
+                  matchesSearch && matchesType && matchesStatus && matchesAmount
+                );
+              })
+              .map((loan) => (
+                <tr key={loan.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {loan.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {loan.member}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {loan.type}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {loan.principal}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {loan.outstanding}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {loan.nextPayment}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        loan.status === "Current"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {loan.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <Button variant="ghost" size="sm">
+                      Details
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedLoan(loan);
+                        setIsPaymentModalOpen(true);
+                      }}
+                    >
+                      Payment
+                    </Button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
 
@@ -504,6 +674,111 @@ export default function LoansPage() {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Make Loan Payment</DialogTitle>
+            <DialogDescription>
+              {selectedLoan &&
+                `Loan ID: ${selectedLoan.id} - ${selectedLoan.member}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="payment-amount" className="text-right">
+                Amount
+              </Label>
+              <Input
+                id="payment-amount"
+                type="number"
+                placeholder="Enter payment amount"
+                className="col-span-3"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-start gap-4">
+              <div className="text-right pt-2">
+                <Label>Payment Method</Label>
+              </div>
+              <div className="col-span-3">
+                <RadioGroup
+                  value={paymentMethod}
+                  onValueChange={setPaymentMethod}
+                >
+                  <div className="flex items-center space-x-2 mb-2">
+                    <RadioGroupItem value="immediate" id="immediate" />
+                    <Label
+                      htmlFor="immediate"
+                      className="flex items-center gap-2"
+                    >
+                      <CreditCard size={16} />
+                      Pay Now
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="later" id="later" />
+                    <Label htmlFor="later" className="flex items-center gap-2">
+                      <Clock size={16} />
+                      Pay Later
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+
+            {paymentMethod === "later" && (
+              <Card className="col-span-4 ml-[100px]">
+                <CardContent className="pt-4">
+                  <p className="text-sm text-gray-500 mb-2">
+                    Pay Later allows you to schedule this payment for a future
+                    date.
+                  </p>
+                  <div className="grid grid-cols-4 items-center gap-4 mb-2">
+                    <Label htmlFor="payment-date" className="text-right">
+                      Payment Date
+                    </Label>
+                    <Input
+                      id="payment-date"
+                      type="date"
+                      className="col-span-3"
+                      min={new Date().toISOString().split("T")[0]}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsPaymentModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                // Handle payment processing
+                if (paymentMethod === "later") {
+                  // Handle Pay Later logic
+                  alert("Payment scheduled for later");
+                } else {
+                  // Handle immediate payment
+                  alert("Processing immediate payment");
+                }
+                setIsPaymentModalOpen(false);
+              }}
+            >
+              {paymentMethod === "later" ? "Schedule Payment" : "Pay Now"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

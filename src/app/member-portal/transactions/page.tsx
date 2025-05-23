@@ -26,36 +26,36 @@ import {
 export default function TransactionsPage() {
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Transaksi</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>Transaksi Terbaru</CardTitle>
           <CardDescription>
-            View your recent account transactions
+            Lihat transaksi rekening terbaru Anda
           </CardDescription>
           <div className="flex flex-col md:flex-row gap-4 pt-4">
-            <Input placeholder="Search transactions..." className="max-w-sm" />
+            <Input placeholder="Cari transaksi..." className="max-w-sm" />
             <div className="flex items-center gap-2">
               <Select>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="All accounts" />
+                  <SelectValue placeholder="Semua rekening" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All accounts</SelectItem>
-                  <SelectItem value="savings">Savings Account</SelectItem>
-                  <SelectItem value="loan">Loan Account</SelectItem>
+                  <SelectItem value="all">Semua rekening</SelectItem>
+                  <SelectItem value="savings">Rekening Tabungan</SelectItem>
+                  <SelectItem value="loan">Rekening Pinjaman</SelectItem>
                 </SelectContent>
               </Select>
               <Select>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Last 30 days" />
+                  <SelectValue placeholder="30 hari terakhir" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="30">Last 30 days</SelectItem>
-                  <SelectItem value="60">Last 60 days</SelectItem>
-                  <SelectItem value="90">Last 90 days</SelectItem>
-                  <SelectItem value="year">This year</SelectItem>
+                  <SelectItem value="30">30 hari terakhir</SelectItem>
+                  <SelectItem value="60">60 hari terakhir</SelectItem>
+                  <SelectItem value="90">90 hari terakhir</SelectItem>
+                  <SelectItem value="year">Tahun ini</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline">Filter</Button>
@@ -66,11 +66,11 @@ export default function TransactionsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Account</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Balance</TableHead>
+                <TableHead>Tanggal</TableHead>
+                <TableHead>Deskripsi</TableHead>
+                <TableHead>Rekening</TableHead>
+                <TableHead>Jumlah</TableHead>
+                <TableHead>Saldo</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -78,43 +78,43 @@ export default function TransactionsPage() {
               {[
                 {
                   date: "2023-07-01",
-                  desc: "Savings Deposit",
-                  account: "Savings",
-                  amount: "+$500.00",
-                  balance: "$2,500.00",
-                  status: "Completed",
+                  desc: "Setoran Tabungan",
+                  account: "Tabungan",
+                  amount: "+Rp7.500.000",
+                  balance: "Rp37.500.000",
+                  status: "Selesai",
                 },
                 {
                   date: "2023-06-28",
-                  desc: "Loan Payment",
-                  account: "Loan",
-                  amount: "-$350.00",
-                  balance: "$4,650.00",
-                  status: "Completed",
+                  desc: "Pembayaran Pinjaman",
+                  account: "Pinjaman",
+                  amount: "-Rp5.250.000",
+                  balance: "Rp69.750.000",
+                  status: "Selesai",
                 },
                 {
                   date: "2023-06-25",
-                  desc: "Interest Credit",
-                  account: "Savings",
-                  amount: "+$12.50",
-                  balance: "$2,000.00",
-                  status: "Completed",
+                  desc: "Kredit Bunga",
+                  account: "Tabungan",
+                  amount: "+Rp187.500",
+                  balance: "Rp30.000.000",
+                  status: "Selesai",
                 },
                 {
                   date: "2023-06-20",
-                  desc: "Savings Deposit",
-                  account: "Savings",
-                  amount: "+$500.00",
-                  balance: "$1,987.50",
-                  status: "Completed",
+                  desc: "Setoran Tabungan",
+                  account: "Tabungan",
+                  amount: "+Rp7.500.000",
+                  balance: "Rp29.812.500",
+                  status: "Selesai",
                 },
                 {
                   date: "2023-06-15",
-                  desc: "Loan Payment",
-                  account: "Loan",
-                  amount: "-$350.00",
-                  balance: "$5,000.00",
-                  status: "Completed",
+                  desc: "Pembayaran Pinjaman",
+                  account: "Pinjaman",
+                  amount: "-Rp5.250.000",
+                  balance: "Rp75.000.000",
+                  status: "Selesai",
                 },
               ].map((tx, i) => (
                 <TableRow key={i}>
@@ -141,7 +141,7 @@ export default function TransactionsPage() {
             </TableBody>
           </Table>
           <div className="flex justify-center mt-4">
-            <Button variant="outline">Load More</Button>
+            <Button variant="outline">Muat Lebih Banyak</Button>
           </div>
         </CardContent>
       </Card>
@@ -149,36 +149,42 @@ export default function TransactionsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Download Statements</CardTitle>
-            <CardDescription>Download your account statements</CardDescription>
+            <CardTitle>Unduh Laporan</CardTitle>
+            <CardDescription>Unduh laporan rekening Anda</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">June 2023 Statement</p>
-                  <p className="text-sm text-muted-foreground">All accounts</p>
+                  <p className="font-medium">Laporan Juni 2023</p>
+                  <p className="text-sm text-muted-foreground">
+                    Semua rekening
+                  </p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Download
+                  Unduh
                 </Button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">May 2023 Statement</p>
-                  <p className="text-sm text-muted-foreground">All accounts</p>
+                  <p className="font-medium">Laporan Mei 2023</p>
+                  <p className="text-sm text-muted-foreground">
+                    Semua rekening
+                  </p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Download
+                  Unduh
                 </Button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">April 2023 Statement</p>
-                  <p className="text-sm text-muted-foreground">All accounts</p>
+                  <p className="font-medium">Laporan April 2023</p>
+                  <p className="text-sm text-muted-foreground">
+                    Semua rekening
+                  </p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Download
+                  Unduh
                 </Button>
               </div>
             </div>
@@ -187,13 +193,13 @@ export default function TransactionsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Transaction Analytics</CardTitle>
-            <CardDescription>View your spending patterns</CardDescription>
+            <CardTitle>Analitik Transaksi</CardTitle>
+            <CardDescription>Lihat pola pengeluaran Anda</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[200px] flex items-center justify-center border rounded-md">
               <p className="text-muted-foreground">
-                Transaction analytics chart will be displayed here
+                Grafik analitik transaksi akan ditampilkan di sini
               </p>
             </div>
           </CardContent>

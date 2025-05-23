@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Eye, Plus, Search, UserPlus, X } from "lucide-react";
@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { createClient } from "../../../supabase/client";
 
 type Member = {
   id: string;
@@ -22,7 +23,8 @@ type Member = {
   status: "Active" | "Inactive" | "Pending";
 };
 
-const initialMembers: Member[] = [
+// Fallback data in case database fetch fails
+const fallbackMembers: Member[] = [
   {
     id: "M001",
     name: "John Doe",
@@ -61,7 +63,47 @@ const initialMembers: Member[] = [
 ];
 
 export default function MembersPage() {
-  const [members, setMembers] = useState<Member[]>(initialMembers);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("members")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          // Transform the data to match our Member type
+          const formattedMembers: Member[] = data.map((member) => ({
+            id: member.id,
+            name: member.name || member.full_name || "",
+            email: member.email || "",
+            joinDate: new Date(member.created_at).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }),
+            status: member.status || "Active",
+          }));
+          setMembers(formattedMembers);
+        }
+      } catch (err) {
+        console.error("Error fetching members:", err);
+        setError("Failed to load members");
+        setMembers(fallbackMembers); // Use fallback data if fetch fails
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [sortBy, setSortBy] = useState("Sort By: Name");
@@ -99,34 +141,80 @@ export default function MembersPage() {
       return 0;
     });
 
-  const handleAddMember = () => {
-    const newId = `M${String(members.length + 1).padStart(3, "0")}`;
-    const today = new Date();
-    const joinDate = `${today.toLocaleString("default", { month: "short" })} ${today.getDate()}, ${today.getFullYear()}`;
+  const handleAddMember = async () => {
+    try {
+      const supabase = createClient();
+      const today = new Date();
 
-    const memberToAdd: Member = {
-      id: newId,
-      name: newMember.name,
-      email: newMember.email,
-      joinDate,
-      status: newMember.status,
-    };
+      // Insert the new member into the database
+      const { data, error } = await supabase
+        .from("members")
+        .insert({
+          name: newMember.name,
+          email: newMember.email,
+          status: newMember.status,
+          created_at: today.toISOString(),
+        })
+        .select()
+        .single();
 
-    setMembers([...members, memberToAdd]);
-    setNewMember({ name: "", email: "", status: "Active" });
-    setIsAddDialogOpen(false);
+      if (error) throw error;
+
+      if (data) {
+        // Format the new member to match our Member type
+        const memberToAdd: Member = {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          joinDate: today.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+          status: data.status,
+        };
+
+        setMembers([memberToAdd, ...members]);
+      }
+
+      setNewMember({ name: "", email: "", status: "Active" });
+      setIsAddDialogOpen(false);
+    } catch (err) {
+      console.error("Error adding member:", err);
+      alert("Failed to add member. Please try again.");
+    }
   };
 
-  const handleEditMember = () => {
+  const handleEditMember = async () => {
     if (!currentMember) return;
 
-    const updatedMembers = members.map((member) =>
-      member.id === currentMember.id ? currentMember : member,
-    );
+    try {
+      const supabase = createClient();
 
-    setMembers(updatedMembers);
-    setIsEditDialogOpen(false);
-    setCurrentMember(null);
+      // Update the member in the database
+      const { error } = await supabase
+        .from("members")
+        .update({
+          name: currentMember.name,
+          email: currentMember.email,
+          status: currentMember.status,
+        })
+        .eq("id", currentMember.id);
+
+      if (error) throw error;
+
+      // Update the local state
+      const updatedMembers = members.map((member) =>
+        member.id === currentMember.id ? currentMember : member,
+      );
+
+      setMembers(updatedMembers);
+      setIsEditDialogOpen(false);
+      setCurrentMember(null);
+    } catch (err) {
+      console.error("Error updating member:", err);
+      alert("Failed to update member. Please try again.");
+    }
   };
 
   return (

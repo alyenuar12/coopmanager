@@ -22,49 +22,49 @@ export default function SavingsPage() {
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">My Savings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Tabungan Saya</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline">Download Statement</Button>
-          <Button>New Transaction</Button>
+          <Button variant="outline">Unduh Laporan</Button>
+          <Button>Transaksi Baru</Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-blue-50">
           <CardHeader className="pb-2">
-            <CardTitle>Regular Savings</CardTitle>
-            <CardDescription>Main savings account</CardDescription>
+            <CardTitle>Tabungan Reguler</CardTitle>
+            <CardDescription>Rekening tabungan utama</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$2,450.00</div>
+            <div className="text-3xl font-bold">Rp35.525.000</div>
             <p className="text-sm text-muted-foreground mt-2">
-              2.5% interest rate
+              Suku bunga 2,5%
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Emergency Fund</CardTitle>
-            <CardDescription>Rainy day savings</CardDescription>
+            <CardTitle>Dana Darurat</CardTitle>
+            <CardDescription>Tabungan hari hujan</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$1,200.00</div>
+            <div className="text-3xl font-bold">Rp17.400.000</div>
             <p className="text-sm text-muted-foreground mt-2">
-              1.75% interest rate
+              Suku bunga 1,75%
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Holiday Savings</CardTitle>
-            <CardDescription>Special purpose savings</CardDescription>
+            <CardTitle>Tabungan Liburan</CardTitle>
+            <CardDescription>Tabungan tujuan khusus</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$750.00</div>
+            <div className="text-3xl font-bold">Rp10.875.000</div>
             <p className="text-sm text-muted-foreground mt-2">
-              2.0% interest rate
+              Suku bunga 2,0%
             </p>
           </CardContent>
         </Card>
@@ -72,56 +72,56 @@ export default function SavingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-          <CardDescription>Your recent savings transactions</CardDescription>
+          <CardTitle>Transaksi Terbaru</CardTitle>
+          <CardDescription>Transaksi tabungan terbaru Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Account</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Balance</TableHead>
+                <TableHead>Tanggal</TableHead>
+                <TableHead>Deskripsi</TableHead>
+                <TableHead>Rekening</TableHead>
+                <TableHead>Jumlah</TableHead>
+                <TableHead>Saldo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {[
                 {
                   date: "2023-07-01",
-                  desc: "Deposit",
-                  account: "Regular Savings",
-                  amount: "+$200.00",
-                  balance: "$2,450.00",
+                  desc: "Setoran",
+                  account: "Tabungan Reguler",
+                  amount: "+Rp2.900.000",
+                  balance: "Rp35.525.000",
                 },
                 {
                   date: "2023-06-25",
-                  desc: "Interest Credit",
-                  account: "Regular Savings",
-                  amount: "+$12.50",
-                  balance: "$2,250.00",
+                  desc: "Kredit Bunga",
+                  account: "Tabungan Reguler",
+                  amount: "+Rp181.250",
+                  balance: "Rp32.625.000",
                 },
                 {
                   date: "2023-06-20",
-                  desc: "Deposit",
-                  account: "Emergency Fund",
-                  amount: "+$100.00",
-                  balance: "$1,200.00",
+                  desc: "Setoran",
+                  account: "Dana Darurat",
+                  amount: "+Rp1.450.000",
+                  balance: "Rp17.400.000",
                 },
                 {
                   date: "2023-06-15",
-                  desc: "Deposit",
-                  account: "Holiday Savings",
-                  amount: "+$50.00",
-                  balance: "$750.00",
+                  desc: "Setoran",
+                  account: "Tabungan Liburan",
+                  amount: "+Rp725.000",
+                  balance: "Rp10.875.000",
                 },
                 {
                   date: "2023-06-10",
-                  desc: "Deposit",
-                  account: "Regular Savings",
-                  amount: "+$200.00",
-                  balance: "$2,237.50",
+                  desc: "Setoran",
+                  account: "Tabungan Reguler",
+                  amount: "+Rp2.900.000",
+                  balance: "Rp32.443.750",
                 },
               ].map((tx, i) => (
                 <TableRow key={i}>
@@ -140,48 +140,50 @@ export default function SavingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Make a Deposit</CardTitle>
-            <CardDescription>Add funds to your savings account</CardDescription>
+            <CardTitle>Buat Setoran</CardTitle>
+            <CardDescription>
+              Tambahkan dana ke rekening tabungan Anda
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="account">Select Account</Label>
+                <Label htmlFor="account">Pilih Rekening</Label>
                 <select className="w-full p-2 border rounded-md">
-                  <option>Regular Savings</option>
-                  <option>Emergency Fund</option>
-                  <option>Holiday Savings</option>
+                  <option>Tabungan Reguler</option>
+                  <option>Dana Darurat</option>
+                  <option>Tabungan Liburan</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input id="amount" type="number" placeholder="0.00" />
+                <Label htmlFor="amount">Jumlah</Label>
+                <Input id="amount" type="number" placeholder="0" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="notes">Notes (Optional)</Label>
+                <Label htmlFor="notes">Catatan (Opsional)</Label>
                 <Input
                   id="notes"
-                  placeholder="Add a note for this transaction"
+                  placeholder="Tambahkan catatan untuk transaksi ini"
                 />
               </div>
-              <Button className="w-full">Submit Deposit Request</Button>
+              <Button className="w-full">Kirim Permintaan Setoran</Button>
             </form>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Savings Goals</CardTitle>
+            <CardTitle>Target Tabungan</CardTitle>
             <CardDescription>
-              Track your progress towards savings goals
+              Lacak kemajuan Anda menuju target tabungan
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
-                  <span>Vacation Fund</span>
-                  <span>$750 / $2,000</span>
+                  <span>Dana Liburan</span>
+                  <span>Rp10.875.000 / Rp29.000.000</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -192,8 +194,8 @@ export default function SavingsPage() {
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <span>New Car</span>
-                  <span>$3,500 / $10,000</span>
+                  <span>Mobil Baru</span>
+                  <span>Rp50.750.000 / Rp145.000.000</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -204,8 +206,8 @@ export default function SavingsPage() {
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <span>Home Down Payment</span>
-                  <span>$12,000 / $50,000</span>
+                  <span>Uang Muka Rumah</span>
+                  <span>Rp174.000.000 / Rp725.000.000</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -215,7 +217,7 @@ export default function SavingsPage() {
                 </div>
               </div>
               <Button variant="outline" className="w-full mt-4">
-                Add New Goal
+                Tambah Target Baru
               </Button>
             </div>
           </CardContent>

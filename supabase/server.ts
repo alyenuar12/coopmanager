@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// This client should only be used in Server Components
 export const createClient = async () => {
   const cookieStore = cookies();
 
@@ -21,6 +22,6 @@ export const createClient = async () => {
           });
         },
       },
-    }
+    },
   );
 };
